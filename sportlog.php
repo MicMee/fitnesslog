@@ -7,6 +7,8 @@
  * Author: Michael Meer
  */
 
+require addon/personaldata.php;
+require addon/training.php;
 
 function sportlog_load() {
     register_hook('app_menu', 'addon/sportlog/sportlog.php', 'sportlog_app_menu');
@@ -21,12 +23,25 @@ function sportlog_unload() {
 }
 
 function sportlog_app_menu($a,&$b) {
+	logger(inside sportlog_app_menu);
     $b['app_menu'][] = '<div class="app-title"><a href="sportlog">Sportlog</a></div>';
 }
 
-function sportlog_post_hook() {}
+function sportlog_install() {
+	logger(inside sportlog_install);
+}
 
-function sportlog_module() {}
+function sportlog_uninstall() {
+	logger(inside sportlog_uninstall);
+}
+
+function sportlog_post_hook() {
+	logger(inside sportlog_post_hook);
+}
+
+function sportlog_module() {
+	logger(inside sportlog_module);
+}
 
 function sportlog_content(&$a) {
 
