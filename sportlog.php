@@ -18,7 +18,7 @@ function sportlog_unload() {
 }
 
 function sportlog_app_menu($a,&$b) {
-    $b['app_menu'][] = '<div class="app-title"><a href="sportlog">Mahjongg</a></div>';
+    $b['app_menu'][] = '<div class="app-title"><a href="sportlog">Sport Log</a></div>';
 }
 
 
@@ -29,12 +29,10 @@ function sportlog_content(&$a) {
 $baseurl = $a->get_baseurl() . '/addon/sportlog';
 
 $o .= <<< EOT
+<h3>Sport Log</h3><br>
+Welcome, this will become the Hubzilla addon to track your trainings, your effort and your body. <br>
+
 <br><br>
-<p align="left">
-<embed src="addon/sportlog/sportlog.swf" quality="high" bgcolor="#FFFFFF" width="800" height="600" name="sportlog" align="middle" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
-<br><br>
-<b>Simply locate the matching tiles and find a way to clear them from the board as quickly as possible.
-A timer at the top of the screen keeps track of how you are doing.</b><br>
 </p>
 EOT;
 
