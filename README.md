@@ -1,2 +1,2 @@
-# sportlog
-a hubzilla addon to track your spotive activities
+# fitnesslog
+a hubzilla addon to track your fitness activities
