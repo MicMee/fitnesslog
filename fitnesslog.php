@@ -366,6 +366,7 @@ function fitnesslog_menue(){
   <button type="submit" name="action" value="report">Report</button><br>
   <br><br>
   </form>
+	
 EOT;
 	logger("in menue ende");
 	return $o;
@@ -374,7 +375,7 @@ EOT;
 function fitnesslog_content(&$a) {
   //wird aufgerufen
   logger('function content');
-  $observer = $a->get_observer(); 
+  $observer = App::get_observer(); 
   $uid = $observer['xchan_guid'];
   $name = $observer['xchan_name'];
   $size = 1 ;
@@ -387,8 +388,8 @@ function fitnesslog_content(&$a) {
     //return;
   //}
   if ($_SERVER['REQUEST_METHOD'] === 'GET'){
-	//$o .= t('GET Methode ');
-	//var_dump($_GET);
+	$o .= t('GET Methode ');
+	var_dump($_GET);
   }
   if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 	//$o .= t('POST Methode <br>');
@@ -400,10 +401,11 @@ function fitnesslog_content(&$a) {
 	$prefweight = $_POST['prefweight'];
 	$preflength = $_POST['preflength'];
 	
-  } 
+  }
 
-  $baseurl = $a->get_baseurl() . '/fitnesslog';
-
+  //$baseurl = $a->get_baseurl() . '/fitnesslog';
+  $baseurl = App::get_baseurl() . '/fitnesslog';
+  
   //[region=aside]
   //menu
   //[/region]
@@ -422,25 +424,31 @@ function fitnesslog_content(&$a) {
   $o .= fitnesslog_menue();
   switch ($action){
   	case "personaldata":
+  		logger('function content - personaldata');
   		$o .= fitnesslog_personaldata($uid);
   		$o .= fitnesslog_showpersonaldata($uid) ;
   		break;
   	case "newtraining":
+  		logger('function content - newtraining');
   		$o .= fitnesslog_newtraining();
   		break;
   	case "report":
+  		logger('function content - report');
   		$o .= fitnesslog_report();
   		break;
   	case "updatepersonaldata":
+  		logger('function content - updatepersonaldata');
   		fitnesslog_updatepersonaldata($uid, $dayofbirth, $gender, $size, $prefweight, $preflength, $weight);
   		$o .= fitnesslog_personaldata($uid);
   		$o .= fitnesslog_showpersonaldata($uid);
   		break;
   	case "updatepreference":
+  		logger('function content - updatepreference');
   		fitnesslog_updatepreference($uid, $prefweight, $preflength);
   		$o .= fitnesslog_personaldata($uid);
   		break;
   	case "nutrition":
+  		logger('function content - nutrition');
   		$o .= fitnesslog_nutrition();
   		break;
   	default:
