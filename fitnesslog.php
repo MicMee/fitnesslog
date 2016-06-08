@@ -68,7 +68,7 @@ function fitnesslog_install() {
                 PRIMARY KEY ( `id` )
                 ) ENGINE = MYISAM DEFAULT CHARSET=utf8");
 	if (! $r) {
-		logger('Table Training nicht angelegt');
+		logger('Table Training not created');
 	}
 	$r = q("CREATE TABLE if not exists `fitnessl_channel` (
                 `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -81,7 +81,7 @@ function fitnesslog_install() {
                 PRIMARY KEY ( `id` )
                 ) ENGINE = MYISAM DEFAULT CHARSET=utf8");
 	if (! $r) {
-		logger('Table Channel nicht angelegt');
+		logger('Table Channel not created');
 	}
 	$r = q("CREATE TABLE if not exists `fitnessl_personaldata` (
                 `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -99,7 +99,7 @@ function fitnesslog_install() {
                 PRIMARY KEY ( `id` )
                 ) ENGINE = MYISAM DEFAULT CHARSET=utf8");
 	if (! $r) {
-		logger('Table Personaldata nicht angelegt');
+		logger('Table Personaldata not created');
 	}
 	logger('Fitnesslog_install ends'); 
 }
@@ -249,7 +249,7 @@ function fitnesslog_updatepreference($uid, $prefweight, $preflength){
 			);
 }
 
-function fitnesslog_updatepersonaldata($uid, $dayofbirth, $gender, $size, $prefweight, $preflength, $weight, $bmi){
+function fitnesslog_updatepersonaldata($uid, $dayofbirth, $gender, $size, $prefweight, $preflength, $weight, $hip, $waist, $chest, $bmi){
 	logger('in function updatepersonaldata');
 	$timestamp = time();
 	$today = date("d.m.Y",$timestamp);
@@ -274,20 +274,27 @@ function fitnesslog_updatepersonaldata($uid, $dayofbirth, $gender, $size, $prefw
 	$r = q("UPDATE fitnessl_channel SET size = '$size' WHERE channel = '$uid'");
 	$r = q("UPDATE fitnessl_channel SET prefweight = '$prefweight' WHERE channel = '$uid'");
 	$r = q("UPDATE fitnessl_channel SET preflength = '$preflength' WHERE channel = '$uid'");
-	$r =q("SELECT 'id', 'timestamp' from fitnessl_channel WHERE 'channel' = '$uid' AND 'timestamp' = '$timestamp'");
+	$r = q("SELECT 'id', 'timestamp' from fitnessl_channel WHERE 'channel' = '$uid' AND 'timestamp' = '$timestamp'");
 	if (! $r ) {
-		logger("gibt es noch nicht. Today is: " . $today );
+		logger("does not exist. Today is: " . $today );
 	} else {
-		logger("gibt es $timestamp als " . $r[0][timestamp] . " !");
+		logger("exist $timestamp as " . $r[0][timestamp] . " !");
 	}
 	$r = q("INSERT INTO `fitnessl_personaldata` 
 			( channel, timestamp, weight, weightunit, hip, hipunit, waist, waistunit, chest, chestunit, bmi ) 
 			VALUES 
-			( '%s', '%s', '%f', '%s', 0, 'cm', 0, 'cm', 0, 'cm', 0) ",
+			( '%s', '%s', '%f', '%s', '%f', '%s', '%f', '%s', '%f', '%s', '%f') ",
 			dbesc($uid),
 			dbesc(datetime_convert('UTC','UTC','$today')),
 			floatval($weight),
-			dbesc($weightunit)
+			dbesc($weightunit),
+			floatval($hip),
+			dbesc($hipunit),
+			floatval($waist),
+			dbesc($waistunit),
+			floatval($chest),
+			dbesc($chestunit),
+			floatval($bmi)
 			);
 }
 
@@ -303,7 +310,8 @@ function fitnesslog_newtraining() {
 	//`avheartrate` INT(10) NOT NULL DEFAULT '0',
 	//`avsteps` INT(10) NOT NULL DEFAULT '0',
 	//`equipment` CHAR( 255 ) NOT NULL DEFAULT '',
-	$now = strtotime('now');
+	//$now = strtotime('now');
+	$now = datetime_convert('UTC','UTC','$today');
 	$o .= <<< EOT
   <form action="/fitnesslog" method="post">
   <h3>Training Data</h3>
@@ -389,12 +397,16 @@ function fitnesslog_content(&$a) {
   //}
   if ($_SERVER['REQUEST_METHOD'] === 'GET'){
 	$o .= t('GET Methode ');
-	var_dump($_GET);
+	//var_dump($_GET);
   }
   if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 	//$o .= t('POST Methode <br>');
 	$gender = $_POST['gender'];
 	$weight = $_POST['weight'];
+	$hip = $_POST['hip'];
+	$waist = $_POST['waist'];
+	$chest = $_POST['chest'];
+	$bmi = $_POST['bmi'];
 	$size = $_POST['size'];
 	$action = $_POST['action'];
 	$dayofbirth = $_POST['dayofbirth'] ;
@@ -438,7 +450,7 @@ function fitnesslog_content(&$a) {
   		break;
   	case "updatepersonaldata":
   		logger('function content - updatepersonaldata');
-  		fitnesslog_updatepersonaldata($uid, $dayofbirth, $gender, $size, $prefweight, $preflength, $weight);
+  		fitnesslog_updatepersonaldata($uid, $dayofbirth, $gender, $size, $prefweight, $preflength, $weight, $hip, $waist, $chest, $bmi);
   		$o .= fitnesslog_personaldata($uid);
   		$o .= fitnesslog_showpersonaldata($uid);
   		break;
